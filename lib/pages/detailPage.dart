@@ -4,13 +4,10 @@ import 'package:music_player/services/song.dart';
 class DetailPage extends StatefulWidget {
   final Song song;
   
- const DetailPage({this.song, Key key}) : super(key: key);
+  const DetailPage({this.song, Key key}) : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();
-
-
-  
 }
 
 class _DetailPageState extends State<DetailPage> {
@@ -74,7 +71,8 @@ class _DetailPageState extends State<DetailPage> {
                                 height: 250.0,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: AssetImage(widget.song.getFileLocation()),
+                                    image: AssetImage(
+                                        widget.song.getImageLocation()),
                                   ),
                                 ),
                               ),

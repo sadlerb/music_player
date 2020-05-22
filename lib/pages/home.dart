@@ -9,6 +9,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
+
   List<Song> playlist = [
     Song(
         name: "asset1",
@@ -20,10 +22,27 @@ class _HomeState extends State<Home> {
         imageLocation: "assets/cover.png")
   ];
 
+  Song currentSong = Song(name: "asset2",
+        fileLocation: "assets/asset2.mp3",
+        imageLocation: "assets/cover.png");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey,
+        child: CircleAvatar(
+          radius: 25.0,
+          backgroundColor: Colors.black,
+          backgroundImage: AssetImage(currentSong.getImageLocation()),
+        ),
+        onPressed: () {
+          showDetailPage(context);
+        },
+        
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -35,74 +54,96 @@ class _HomeState extends State<Home> {
             expandedHeight: 150,
           ),
           SliverList(
-            delegate: SliverChildListDelegate([
-              SongCard(playlist: playlist)
-            ]),
+            delegate: SliverChildListDelegate(
+              [
+                buildSongCard(context),
+              ],
+            ),
           )
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        child: GestureDetector(
-          onTap: () {
-            showDetailPage(context);
-          },
-          child: Hero(
-            tag: 'dash',
-            child: Card(
-              margin: EdgeInsets.all(0),
-              color: Colors.black,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 30.0,
-                      backgroundImage: AssetImage("assets/cover.png"),
-                    ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Peace Is The Mission",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        Text(
-                          "Major Lazer",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 70.0,
-                    ),
-                    Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 60.0,
-                    )
-                  ],
-                ),
-              ),
+        shape: CircularNotchedRectangle(),
+        notchMargin: 4.0,
+        child: new Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {},
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 
+  Column buildSongCard(BuildContext context) {
+    return Column(
+                  children: playlist
+                      .map((song) => GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                currentSong = song;
+                              });
+                            },
+                            child: Card(
+                              margin: EdgeInsets.all(1),
+                              child: Container(
+                                color: Colors.black,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.09,
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: <Widget>[
+                                    CircleAvatar(
+                                      radius: 30.0,
+                                      backgroundImage:
+                                          AssetImage(song.getImageLocation()),
+                                    ),
+                                    SizedBox(
+                                      width: 20.0,
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '${song.getName()}',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20.0),
+                                        ),
+                                        Text(
+                                          '${song.getArtist()}',
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: 180,
+                                    ),
+                                    Icon(Icons.more_vert)
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ))
+                      .toList());
+  }
+
   void showDetailPage(context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DetailPage(song: playlist[0],)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => DetailPage(
+                  song: currentSong,
+                )));
   }
 }
-
