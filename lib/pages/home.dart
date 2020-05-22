@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/detailPage.dart';
+import 'package:music_player/services/song.dart';
+import 'package:music_player/services/songCard.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -7,6 +9,17 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  List<Song> playlist = [
+    Song(
+        name: "asset1",
+        fileLocation: "assets/asset1.mp3",
+        imageLocation: "assets/img.jpg"),
+    Song(
+        name: "asset2",
+        fileLocation: "assets/asset2.mp3",
+        imageLocation: "assets/cover.png")
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +35,9 @@ class _HomeState extends State<Home> {
             expandedHeight: 150,
           ),
           SliverList(
-            delegate: SliverChildListDelegate([]),
+            delegate: SliverChildListDelegate([
+              SongCard(playlist: playlist)
+            ]),
           )
         ],
       ),
@@ -87,7 +102,7 @@ class _HomeState extends State<Home> {
 
   void showDetailPage(context) {
     Navigator.push(
-      
-        context, MaterialPageRoute(builder: (context) => DetailPage()));
+        context, MaterialPageRoute(builder: (context) => DetailPage(song: playlist[0],)));
   }
 }
+

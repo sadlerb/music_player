@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:music_player/services/song.dart';
 
 class DetailPage extends StatefulWidget {
+  final Song song;
+  
+ const DetailPage({this.song, Key key}) : super(key: key);
+
   @override
   _DetailPageState createState() => _DetailPageState();
+
+
+  
 }
 
 class _DetailPageState extends State<DetailPage> {
@@ -66,7 +74,7 @@ class _DetailPageState extends State<DetailPage> {
                                 height: 250.0,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: AssetImage("assets/cover.png"),
+                                    image: AssetImage(widget.song.getFileLocation()),
                                   ),
                                 ),
                               ),
@@ -94,14 +102,14 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                   SizedBox(height: 25.0),
                   Text(
-                    "Peace Is The Mission",
+                    "${widget.song.getName()}",
                     style: TextStyle(fontSize: 25.0, color: Colors.white),
                   ),
                   SizedBox(
                     height: 10.0,
                   ),
                   Text(
-                    "Music Is The Weapon",
+                    "${widget.song.getArtist()}",
                     style: TextStyle(
                       fontSize: 18.0,
                       color: Colors.white,
