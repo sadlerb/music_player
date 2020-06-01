@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:music_player/pages/detailPage.dart';
 import 'package:music_player/services/song.dart';
 import 'package:music_player/services/songCard.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,90 +20,85 @@ class _HomeState extends State<Home> {
         fileLocation: "assets/asset2.mp3",
         imageLocation: "assets/cover.png")
   ];
+  Song currentSong = Song(
+      name: "asset2",
+      fileLocation: "assets/asset2.mp3",
+      imageLocation: "assets/cover.png");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            floating: true,
-            pinned: false,
-            snap: true,
-            backgroundColor: Colors.blueGrey,
-            title: Text("Music"),
-            expandedHeight: 150,
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              SongCard(playlist: playlist)
-            ]),
-          )
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: GestureDetector(
-          onTap: () {
-            showDetailPage(context);
-          },
-          child: Hero(
-            tag: 'dash',
-            child: Card(
-              margin: EdgeInsets.all(0),
-              color: Colors.black,
-              child: Container(
-                height: MediaQuery.of(context).size.height * 0.1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 30.0,
-                      backgroundImage: AssetImage("assets/cover.png"),
-                    ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          "Peace Is The Mission",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                        Text(
-                          "Major Lazer",
-                          style: TextStyle(
-                            color: Colors.white60,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      width: 70.0,
-                    ),
-                    Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 60.0,
-                    )
-                  ],
-                ),
+      body: SlidingUpPanel(
+        maxHeight: MediaQuery.of(context).size.height,
+        panel: DetailPage(
+          song: currentSong,
+        ),
+        collapsed: Container(
+          decoration: BoxDecoration(color: Colors.blueGrey),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              CircleAvatar(
+                radius: 30.0,
+                backgroundImage: AssetImage(currentSong.getImageLocation()),
               ),
-            ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "${currentSong.getName()}",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    "${currentSong.getArtist()}",
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ),
+                  )
+                ],
+              ),
+              IconButton(
+                iconSize: 60.0,
+                icon: Icon(
+                  Icons.play_arrow,
+                ),
+                onPressed: () {},
+              )
+            ],
           ),
+        ),
+        body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: Colors.grey,
+              expandedHeight: 150.0,
+              title: Text("Music"),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                [
+                  Column(
+                      children: playlist
+                          .map(
+                            (song) => GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  currentSong = song;
+                                });
+                              },
+                              child: SongCard(song: song),
+                            ),
+                          ).toList()),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );
   }
-
-  void showDetailPage(context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => DetailPage(song: playlist[0],)));
-  }
 }
-

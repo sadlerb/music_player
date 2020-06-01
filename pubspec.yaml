@@ -13,6 +13,8 @@ dependencies:
 
   cupertino_icons: ^0.1.2
   assets_audio_player: ^1.5.0+1
+  sliding_up_panel: ^1.0.2
+  
 
 dev_dependencies:
   flutter_test:
