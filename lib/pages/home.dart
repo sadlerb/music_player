@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:music_player/pages/detailPage.dart';
+import 'package:music_player/services/player.dart';
 import 'package:music_player/services/song.dart';
 import 'package:music_player/services/songCard.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -25,13 +26,23 @@ class _HomeState extends State<Home> {
       fileLocation: "assets/asset2.mp3",
       imageLocation: "assets/cover.png");
 
+    Player player;
+
+    bool playing = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SlidingUpPanel(
+        onPanelClosed: () {
+          setState(() {
+            
+          });
+        },
         maxHeight: MediaQuery.of(context).size.height,
         panel: DetailPage(
+          player: player,
+          playing: playing,
           song: currentSong,
         ),
         collapsed: Container(
@@ -63,10 +74,12 @@ class _HomeState extends State<Home> {
               ),
               IconButton(
                 iconSize: 60.0,
-                icon: Icon(
-                  Icons.play_arrow,
-                ),
-                onPressed: () {},
+                icon: Icon(playing ? Icons.pause: Icons.play_arrow),
+                onPressed: () {
+                  setState(() {
+                    playing = !playing;
+                  });
+                },
               )
             ],
           ),
