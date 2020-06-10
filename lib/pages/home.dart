@@ -26,9 +26,11 @@ class _HomeState extends State<Home> {
       fileLocation: "assets/asset2.mp3",
       imageLocation: "assets/cover.png");
 
-    Player player;
+    Player player = Player();
+    DetailPage _detailPage;
 
     bool playing = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,15 +38,11 @@ class _HomeState extends State<Home> {
       body: SlidingUpPanel(
         onPanelClosed: () {
           setState(() {
-            
+            playing = _detailPage.onClose();
           });
         },
         maxHeight: MediaQuery.of(context).size.height,
-        panel: DetailPage(
-          player: player,
-          playing: playing,
-          song: currentSong,
-        ),
+        panel: _detailPage = DetailPage(song: currentSong, player: player, playing: playing),
         collapsed: Container(
           decoration: BoxDecoration(color: Colors.blueGrey),
           child: Row(
@@ -78,6 +76,7 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   setState(() {
                     playing = !playing;
+                    playing ? player.play() : player.pause();
                   });
                 },
               )
@@ -101,6 +100,8 @@ class _HomeState extends State<Home> {
                               onTap: () {
                                 setState(() {
                                   currentSong = song;
+                                  player.open(currentSong);
+                                  playing = true;
                                 });
                               },
                               child: SongCard(song: song),

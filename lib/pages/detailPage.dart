@@ -14,6 +14,10 @@ class DetailPage extends StatefulWidget {
 
   @override
   _DetailPageState createState() => _DetailPageState();
+
+  bool onClose() {
+    return playing;
+  }
 }
 
 class _DetailPageState extends State<DetailPage> {
@@ -132,6 +136,7 @@ class _DetailPageState extends State<DetailPage> {
                       onPressed: () {
                         setState(() {
                           widget.playing = !widget.playing;
+                          widget.playing ? widget.player.play() : widget.player.pause();
                         });
                       },
                     ),
@@ -156,4 +161,6 @@ class _DetailPageState extends State<DetailPage> {
       ),
     );
   }
+
+
 }
