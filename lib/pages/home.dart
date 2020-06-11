@@ -11,6 +11,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  int position = 0;
+
   List<Song> playlist = [
     Song(
         name: "asset1",
@@ -21,10 +23,7 @@ class _HomeState extends State<Home> {
         fileLocation: "assets/asset2.mp3",
         imageLocation: "assets/cover.png")
   ];
-  Song currentSong = Song(
-      name: "asset2",
-      fileLocation: "assets/asset2.mp3",
-      imageLocation: "assets/cover.png");
+
 
     Player player = Player();
     DetailPage _detailPage;
@@ -38,11 +37,12 @@ class _HomeState extends State<Home> {
       body: SlidingUpPanel(
         onPanelClosed: () {
           setState(() {
-            playing = _detailPage.onClose();
+            playing = _detailPage.onClose()[0];
+            position = _detailPage.onClose()[1];
           });
         },
         maxHeight: MediaQuery.of(context).size.height,
-        panel: _detailPage = DetailPage(song: currentSong, player: player, playing: playing),
+        panel: _detailPage = DetailPage(player: player, playing: playing, index: position,playlist: playlist,),
         collapsed: Container(
           decoration: BoxDecoration(color: Colors.blueGrey),
           child: Row(
@@ -50,20 +50,20 @@ class _HomeState extends State<Home> {
             children: <Widget>[
               CircleAvatar(
                 radius: 30.0,
-                backgroundImage: AssetImage(currentSong.getImageLocation()),
+                backgroundImage: AssetImage(playlist.elementAt(position).getImageLocation()),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "${currentSong.getName()}",
+                    "${playlist.elementAt(position).getName()}",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
                     ),
                   ),
                   Text(
-                    "${currentSong.getArtist()}",
+                    "${playlist.elementAt(position).getArtist()}",
                     style: TextStyle(
                       color: Colors.black54,
                     ),
@@ -96,17 +96,19 @@ class _HomeState extends State<Home> {
                   Column(
                       children: playlist
                           .map(
-                            (song) => GestureDetector(
+                            (song){
+                              int index = playlist.indexOf(song);
+                              return GestureDetector(
                               onTap: () {
                                 setState(() {
-                                  currentSong = song;
-                                  player.open(currentSong);
+                                  position = index;
+                                  player.open(playlist.elementAt(index));
                                   playing = true;
                                 });
                               },
                               child: SongCard(song: song),
-                            ),
-                          ).toList()),
+                            );
+                            }).toList()),
                 ],
               ),
             )

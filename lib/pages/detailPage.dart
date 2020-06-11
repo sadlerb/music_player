@@ -3,20 +3,25 @@ import 'package:music_player/services/player.dart';
 import 'package:music_player/services/song.dart';
 
 class DetailPage extends StatefulWidget {
-  final Song song;
-
   final Player player;
   bool playing;
+  final List<Song> playlist;
+  int index;
 
   DetailPage(
-      {@required this.song, @required this.player, @required this.playing, Key key})
+      {@required this.player,
+      @required this.playing,
+      @required this.playlist,
+      @required this.index,
+      Key key})
       : super(key: key);
 
   @override
   _DetailPageState createState() => _DetailPageState();
 
-  bool onClose() {
-    return playing;
+  List onClose() {
+    return [playing,index];
+    
   }
 }
 
@@ -69,8 +74,9 @@ class _DetailPageState extends State<DetailPage> {
                             height: 250.0,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image:
-                                    AssetImage(widget.song.getImageLocation()),
+                                image: AssetImage(widget.playlist
+                                    .elementAt(widget.index)
+                                    .getImageLocation()),
                               ),
                             ),
                           ),
@@ -97,14 +103,14 @@ class _DetailPageState extends State<DetailPage> {
                 ),
                 SizedBox(height: 25.0),
                 Text(
-                  "${widget.song.getName()}",
+                  "${widget.playlist.elementAt(widget.index).getName()}",
                   style: TextStyle(fontSize: 25.0, color: Colors.white),
                 ),
                 SizedBox(
                   height: 10.0,
                 ),
                 Text(
-                  "${widget.song.getArtist()}",
+                  "${widget.playlist.elementAt(widget.index).getArtist()}",
                   style: TextStyle(
                     fontSize: 18.0,
                     color: Colors.white,
@@ -126,7 +132,20 @@ class _DetailPageState extends State<DetailPage> {
                       iconSize: 30.0,
                       icon: Icon(Icons.skip_previous),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        setState(() {
+                          if (widget.index == 0){
+                            widget.index = widget.playlist.length - 1;
+                            widget.player.open(widget.playlist.elementAt(widget.index));
+                            widget.playing = true;
+                          }else if(widget.index > 0){
+                            widget.index--;
+                            widget.player.open(widget.playlist.elementAt(widget.index));
+                            widget.playing = true;
+                          }
+
+                        });
+                      },
                     ),
                     IconButton(
                       iconSize: 90.0,
@@ -136,7 +155,9 @@ class _DetailPageState extends State<DetailPage> {
                       onPressed: () {
                         setState(() {
                           widget.playing = !widget.playing;
-                          widget.playing ? widget.player.play() : widget.player.pause();
+                          widget.playing
+                              ? widget.player.play()
+                              : widget.player.pause();
                         });
                       },
                     ),
@@ -144,7 +165,24 @@ class _DetailPageState extends State<DetailPage> {
                       iconSize: 30.0,
                       icon: Icon(Icons.skip_next),
                       color: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        print(widget.index);
+                        print(widget.playlist.length);
+                        setState(() {
+                          if (widget.index > widget.playlist.length - 2) {
+                            widget.index = 0;
+                            widget.player
+                                .open(widget.playlist.elementAt(widget.index));
+                            widget.playing = true;
+                          } else if (widget.index <=
+                              widget.playlist.length - 2) {
+                            widget.index++;
+                            widget.player
+                                .open(widget.playlist.elementAt(widget.index));
+                            widget.playing = true;
+                          }
+                        });
+                      },
                     ),
                     IconButton(
                       iconSize: 30.0,
@@ -161,6 +199,4 @@ class _DetailPageState extends State<DetailPage> {
       ),
     );
   }
-
-
 }
